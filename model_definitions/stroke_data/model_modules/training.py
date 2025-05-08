@@ -15,17 +15,37 @@ import joblib
 class CustomPrep:
     def fit(self, *args, **kwargs): return self
     def transform(self, ds, *args, **kwargs):
-        df = ds.rename(columns={'smoking_status': 'smoking', 'Residence_type': 'residence', 'avg_glucose_level': 'glucose'})
-        print(df.columns)
-        df = pd.get_dummies(df, columns=['work_type', 'smoking'], dtype=int)
-        df.drop(columns=['work_type_children','work_type_Never_worked','smoking_Unknown'], inplace=True)
+        
+        # rename columns
+        df = ds.rename(columns={
+            'smoking_status': 'smoking',
+            'Residence_type': 'residence',
+            'avg_glucose_level': 'glucose'
+            })
+        
+        # incorrect values
+        df = df[df["gender"]!="Other"]
+
+        # missing values
+        df["age_group"] = pd.cut(df["age"], bins=list(range(0, 100, 10)), right=False, include_lowest=False)
+        df["bmi"] = df.groupby(["gender", "age_group"],observed=False)["bmi"].transform(lambda x: x.fillna(x.mean().round(2)))
+        df = df.drop(columns="age_group")
+
+        # binary categories to boolean (1/0)
         df['gender'] = (df['gender'] == 'Male').astype(int)
         df['ever_married'] = (df['ever_married'] == 'Yes').astype(int)
         df['residence'] = (df['residence'] == 'Urban').astype(int)
         df.rename(columns={'gender': 'gender_Male', 'residence': 'residence_Urban'}, inplace=True)
+
+        # multi-value categories as dummy columns
+        df = pd.get_dummies(df, columns=['work_type', 'smoking'], dtype=int)
+        df.drop(columns=['work_type_children','work_type_Never_worked','smoking_Unknown'], inplace=True)
+
+        # standarize continuous columns
         df['age'] = (df['age'] - df['age'].mean()) / df['age'].std()
         df['bmi'] = (df['bmi'] - df['bmi'].mean()) / df['bmi'].std()
         df['glucose'] = (df['glucose'] - df['glucose'].mean()) / df['glucose'].std()
+        
         return df
 
 
