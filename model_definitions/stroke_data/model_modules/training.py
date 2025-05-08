@@ -1,8 +1,8 @@
 from aoa import (
+    ModelContext,
+    tmo_create_context,
     record_training_stats,
-    save_plot,
-    aoa_create_context,
-    ModelContext
+    save_plot
 )
 from teradataml import DataFrame
 from sklearn.linear_model import LogisticRegression
@@ -15,7 +15,9 @@ import joblib
 class CustomPrep:
     def fit(self, *args, **kwargs): return self
     def transform(self, ds, *args, **kwargs):
-        df = pd.get_dummies(ds, columns=['work_type', 'smoking'], dtype=int)
+        print(ds.columns)
+        df = ds.rename(columns={'smoking': 'smoking_status', 'residence': 'Residence_type', 'glucose': 'avg_glucose_level'})
+        df = pd.get_dummies(df, columns=['work_type', 'smoking'], dtype=int)
         df.drop(columns=['work_type_children','work_type_Never_worked','smoking_Unknown'], inplace=True)
         df['gender'] = (df['gender'] == 'Male').astype(int)
         df['ever_married'] = (df['ever_married'] == 'Yes').astype(int)
@@ -28,7 +30,7 @@ class CustomPrep:
 
 
 def train(context: ModelContext, **kwargs):
-    aoa_create_context()
+    tmo_create_context()
 
     feature_names = context.dataset_info.feature_names
     target_name = context.dataset_info.target_names[0]
