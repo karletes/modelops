@@ -13,8 +13,8 @@ import joblib
 
 
 class CustomPrep:
-    def fit(self, ds): pass
-    def transform(self, ds):
+    def fit(self, *args, **kwargs): pass
+    def transform(self, ds, *args, **kwargs):
         df = pd.get_dummies(ds, columns=['work_type', 'smoking'], dtype=int)
         df.drop(columns=['work_type_children','work_type_Never_worked','smoking_Unknown'], inplace=True)
         df['gender'] = (df['gender'] == 'Male').astype(int)
