@@ -13,7 +13,7 @@ import joblib
 
 
 class CustomPrep:
-    def fit(self, *args, **kwargs): pass
+    def fit(self, *args, **kwargs): return self
     def transform(self, ds, *args, **kwargs):
         df = pd.get_dummies(ds, columns=['work_type', 'smoking'], dtype=int)
         df.drop(columns=['work_type_children','work_type_Never_worked','smoking_Unknown'], inplace=True)
