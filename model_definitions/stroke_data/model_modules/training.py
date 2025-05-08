@@ -15,8 +15,8 @@ import joblib
 class CustomPrep:
     def fit(self, *args, **kwargs): return self
     def transform(self, ds, *args, **kwargs):
-        print(ds.columns)
-        df = ds.rename(columns={'smoking': 'smoking_status', 'residence': 'Residence_type', 'glucose': 'avg_glucose_level'})
+        df = ds.rename(columns={'smoking_status': 'smoking', 'Residence_type': 'residence', 'avg_glucose_level': 'glucose'})
+        print(df.columns)
         df = pd.get_dummies(df, columns=['work_type', 'smoking'], dtype=int)
         df.drop(columns=['work_type_children','work_type_Never_worked','smoking_Unknown'], inplace=True)
         df['gender'] = (df['gender'] == 'Male').astype(int)
