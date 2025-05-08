@@ -1,0 +1,7 @@
+{
+    "id": "f22356b8-4934-4b11-bc78-c3d88e1021c7",
+    "name": "stroke_data",
+    "description": "Test model for heart 'stroke'",
+    "language": "python",
+    "source_model_id": "03c9a01f-bd46-4e7c-9a60-4282039094e6"
+}
